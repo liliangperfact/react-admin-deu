@@ -21,6 +21,33 @@ export function reqGetSecSubject(parentId) {
     method: "GET",
   });
 }
+
+export function reqAddSecSubject(title,parentId) {
+  return request({
+    //注意，会自动proxy自动拼接发送请求
+    //假设没有借口，此时使用mock服务
+    url: `${BASE_URL}/save`,
+    method: "POST",
+    data:{
+      title,
+      parentId
+    }
+  });
+}
+export function reqUpdateSubject(id,title) {
+  return request({
+    //注意，会自动proxy自动拼接发送请求
+    //假设没有借口，此时使用mock服务
+    url: `${BASE_URL}/update`,
+    method: "PUT",
+    data:{
+      id,
+      title
+    }
+  });
+}
+
+
 export function reqDelSubject(id) {
   return request({
     //注意，会自动proxy自动拼接发送请求

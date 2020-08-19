@@ -1,7 +1,8 @@
 import {
   GET_SUBJECT_LIST,
   GET_SEC_SUBJECT_LIST,
-  DEL_SUBJECT_LIST
+  UPDATE_SUBJECT,
+  DELETE_SUBJECT
 } from "./constants";
 
 const initSubjectList = {
@@ -30,23 +31,47 @@ export default function subjectList(prevState = initSubjectList, action) {
         ...prevState,
         items: FisItems
       }
-    case DEL_SUBJECT_LIST:
+    case UPDATE_SUBJECT:
+      console.log(action.data)
+      prevState.items.forEach(item => {
+        if (item._id === action.data.id) {
+          item.title = action.data.title
+          return
+        }
+
+        // 遍历二级
+        item.children.forEach(secItem => {
+          if (secItem._id === action.data.id) {
+            secItem.title = action.data.title
+            return
+          }
+        })
+        return {
+          ...prevState
+        }
+      })
+    case DELETE_SUBJECT:
+      const firstItems = [...prevState.items]
+      firstItems.forEach((item,index )=> {
+        if (item._id === action.data) {
+          firstItems.splice(index,1)
+          return
+        }
+
+        // 遍历二级
+        item.children.forEach((secItem,index) => {
+          if (secItem._id === action.data) {
+            item.children.splice(index,1)
+            return
+          }
+        })
+      })
       return {
-        total: prevState.total - 1,
-        items: prevState.items.filter((item) => item._id !== action.data),
-      };
+        ...prevState,
+        items:firstItems
+      }
     default:
       return prevState;
   }
 }
-// const delid = {
-//   id:''
-// }
-// export  function delsubjectList(prevState = delid, action) {
-//   switch (action.type) {
-//     case DEL_SUBJECT_LIST:
-//       return action.data;
-//     default:
-//       return prevState;
-//   }
-// }
+

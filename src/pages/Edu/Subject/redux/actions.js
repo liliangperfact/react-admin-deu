@@ -1,13 +1,15 @@
 import {
   reqGetSubject,
   reqGetSecSubject,
+  reqUpdateSubject,
   reqDelSubject
 } from "@api/edu/subject";
 import { message, } from 'antd'
 import {
   GET_SUBJECT_LIST,
   GET_SEC_SUBJECT_LIST,
-  DEL_SUBJECT_LIST
+  UPDATE_SUBJECT,
+  DELETE_SUBJECT
 } from "./constants";
 /**
  * 获取/一级
@@ -21,7 +23,9 @@ export const getSubjectList = (page, limit) => {
   return (dispatch) => {
     return reqGetSubject(page, limit).then((response) => {
       dispatch(getSubjectListSync(response));
-      message.success('更新课程成功');
+      // if(this.props.$router.path == '/add') return
+     // message.success('更新课程成功');
+
       return response.total;
     });
   };
@@ -45,19 +49,36 @@ export const getSecSubjectList = (parentId) => {
   };
 };
 
-
-//删除
-const delSubjectListSync = id => ({
-  type: DEL_SUBJECT_LIST,
-  data: id,
+const updateSubjectListSync = data => ({
+  type: UPDATE_SUBJECT,
+  data,
 });
 
-export const delOneSubject = (id) => {
+export const updateSubjectList = (id,title) => {
+
   return (dispatch) => {
-    return reqDelSubject(id).then(() => {
-      dispatch(delSubjectListSync(id));
-      message.success('删除课程成功');
+    return reqUpdateSubject(id,title).then((response) => {
+      dispatch(updateSubjectListSync({id,title}));
+      return 123;
     });
   };
 };
+
+
+const delSubjectListSync = data => ({
+  type: DELETE_SUBJECT,
+  data,
+});
+
+export const delSubjectList = (id) => {
+
+  return (dispatch) => {
+    return reqDelSubject(id).then((response) => {
+      dispatch(delSubjectListSync(id));
+      return 123;
+    });
+  };
+};
+
+
 
