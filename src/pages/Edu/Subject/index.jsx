@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button, Table, Tooltip, Modal, message, Input } from 'antd'
 import { PlusOutlined, FormOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { connect } from "react-redux";
-import { getSubjectList, getSecSubjectList ,updateSubjectList,delSubjectList} from './redux'
+import { getSubjectList, getSecSubjectList, updateSubjectList, delSubjectList } from './redux'
 // import { reqDelSubject,reqUpdateSubject} from '@api/edu/subject'
 
 import './index.less'
@@ -12,7 +12,7 @@ import './index.less'
   state => ({
     subjectList: state.subjectList
   }),
-  { getSubjectList, getSecSubjectList, updateSubjectList,delSubjectList}
+  { getSubjectList, getSecSubjectList, updateSubjectList, delSubjectList }
 )
 class Subject extends Component {
   state = {
@@ -36,7 +36,7 @@ class Subject extends Component {
   handleShowSizeChange = (current, pageSize) => {
     this.props.getSubjectList(current, pageSize)
   }
-  
+
   handleExpand = (expanded, record) => {
     if (expanded) {
       this.props.getSecSubjectList(record._id)
@@ -52,28 +52,28 @@ class Subject extends Component {
       title: title
     })
     this.title = title
-      //记录旧的
+    //记录旧的
   }
   handleUpdateChange = e => {
     this.setState({
-      title:e.target.value
+      title: e.target.value
     })
   }
-  handleCanle = () =>{
+  handleCanle = () => {
     this.setState({
-      subjectId :'',
-      title:''
+      subjectId: '',
+      title: ''
     })
-    
+
   }
-  handleUpdateChrom = async() =>{
+  handleUpdateChrom = async () => {
     //判断为空
-    if(!this.state.title.trim()) {
-      message.success('请输入正确的标题名称') 
-      return 
+    if (!this.state.title.trim()) {
+      message.success('请输入正确的标题名称')
+      return
     }
-    if(this.state.title === this.title){
-      message.success('标题名称不能相同') 
+    if (this.state.title === this.title) {
+      message.success('标题名称不能相同')
       return
     }
     let id = this.state.subjectId
@@ -81,17 +81,17 @@ class Subject extends Component {
     await this.props.updateSubjectList(id, title)
     message.success('修改成功')
     this.setState({
-      subjectId :'',
-      title:''
+      subjectId: '',
+      title: ''
     })
     //刷新
-   //this.props.getSubjectList(1,10)
+    //this.props.getSubjectList(1,10)
   }
   handleDelete = record => () => {
     console.log(record)
     Modal.confirm({
       title: <>
-        你想要删除<span style={{color:'red',margin:"0 10px"}}>{record.title}</span>吗？
+        你想要删除<span style={{ color: 'red', margin: "0 10px" }}>{record.title}</span>吗？
       </>,
       icon: <ExclamationCircleOutlined />,
       cancelText: '取消',
@@ -100,23 +100,29 @@ class Subject extends Component {
         try {
           await this.props.delSubjectList(record._id)
           message.success('删除成功')
+          if (record.parentId === "0") {
+            if (this.page > 1 && record.parentId === "0" && this.props.subjectList.items.length <= 0) {
+              this.props.getSubjectList(--this.page, 10)
+            }
+            this.props.getSubjectList(this.page, 10)
+          }
         } catch {
           message.error('删除失败')
         }
       }
     })
   }
-  keyUp = (e) =>{
-    if(e.keyCode===13){
+  keyUp = (e) => {
+    if (e.keyCode === 13) {
       this.handleUpdateChrom()
     }
   }
   render() {
 
     const columns = [
-      
+
       {
-        title: '分类名称',  key: 'name',
+        title: '分类名称', key: 'name',
         render: record => {
           //console.log(record)
           if (this.state.subjectId === record._id) {
